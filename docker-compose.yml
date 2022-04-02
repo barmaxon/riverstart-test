@@ -1,0 +1,38 @@
+version: '3'
+services:
+
+    #PHP Service
+    web:
+        build:
+            context: .
+            dockerfile: ./docker/php/Dockerfile
+        container_name: riverstar_web
+        ports:
+            - "35:80"
+        restart: unless-stopped
+        tty: true
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www/
+        networks:
+            - riverstar-network
+
+    #MySQL Service
+    db:
+        image: mariadb:latest
+        container_name: riverstar_db
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "3309:3306"
+        volumes:
+            - ./docker/db:/var/lib/mysql
+        environment:
+            MARIADB_DATABASE: riverstar
+            MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'yes'
+        networks:
+            - riverstar-network
+#Docker Networks
+networks:
+    riverstar-network:
+        driver: bridge
